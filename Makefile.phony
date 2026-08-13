@@ -1,0 +1,45 @@
+.PHONY: help install test lint clean verify deploy
+
+help:
+	@echo "Available commands:"
+	@echo "  make install      - Install dependencies"
+	@echo "  make test         - Run tests"
+	@echo "  make lint         - Lint configurations"
+	@echo "  make verify       - Verify certificate chain"
+	@echo "  make deploy       - Deploy to production"
+	@echo "  make clean        - Clean artifacts"
+
+install:
+	@echo "Installing dependencies..."
+	@chmod +x scripts/*.sh
+	@openssl version || (echo "OpenSSL required" && exit 1)
+
+test:
+	@echo "Running tests..."
+	@./scripts/lint-config.sh
+	@./tests/test-certificates.sh
+
+lint:
+	@echo "Linting configurations..."
+	@./scripts/lint-config.sh
+
+verify:
+	@echo "Verifying certificates..."
+	@./scripts/verify-chain.sh certificates/*.crt
+
+deploy:
+	@echo "Deploying to GitHub..."
+	@./scripts/deploy-github-secrets.sh
+
+clean:
+	@echo "Cleaning artifacts..."
+	@rm -rf tmp/ temp/ *.csr *.key *.crt
+	@find . -name "*.tmp" -delete
+
+certificates:
+	@echo "Generating certificates..."
+	@./scripts/generate-csr.sh --type $(TYPE) --domain $(DOMAIN)
+
+revoke:
+	@echo "Revoking certificate..."
+	@./scripts/revoke-certificate.sh --serial $(SERIAL)
