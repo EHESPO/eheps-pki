@@ -1,0 +1,32 @@
+
+---
+
+#### 8. **scripts/sign-certificate.sh**
+```bash
+#!/bin/bash
+# Sign certificate using EHEPS CA (production-safe)
+
+set -euo pipefail
+
+CERT_FILE="${1:-}"
+CA_TYPE="${2:-public}"  # or internal
+
+if [[ -z "$CERT_FILE" ]]; then
+    echo "Usage: $0 <csr-file> [public|internal]"
+    exit 1
+fi
+
+echo "🔐 Signing certificate with EHEPS $CA_TYPE CA..."
+
+# Using OpenSSL with HSM proxy
+openssl ca \
+    -config "openssl/${CA_TYPE}-ca.cnf" \
+    -in "$CERT_FILE" \
+    -out "certificates/${CERT_FILE%.csr}.crt" \
+    -batch \
+    -notext
+
+echo "✅ Certificate signed: certificates/${CERT_FILE%.csr}.crt"
+
+# Verify chain
+./scripts/verify-chain.sh "certificates/${CERT_FILE%.csr}.crt"
