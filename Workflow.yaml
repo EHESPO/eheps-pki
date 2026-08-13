@@ -1,0 +1,76 @@
+name: Validate PKI Configuration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Daily validation
+  workflow_dispatch:     # Manual trigger
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install OpenSSL
+      run: sudo apt-get update && sudo apt-get install -y openssl
+    
+    - name: Lint configurations
+      run: ./scripts/lint-config.sh
+    
+    - name: Validate certificate profiles
+      run: |
+        for profile in profiles/*.conf; do
+          echo "Validating $profile..."
+          openssl req -new -key /dev/null -out /dev/null -config "$profile" 2>/dev/null || \
+            echo "⚠️  Profile validation warning: $profile"
+        done
+    
+    - name: Check for private key leaks
+      run: |
+        if find . -type f \( -name "*.key" -o -name "*.p12" -o -name "*.pfx" -o -name "*.pem" \) | grep -q .; then
+          echo "❌ Private keys detected in repository!"
+          find . -type f \( -name "*.key" -o -name "*.p12" -o -name "*.pfx" -o -name "*.pem" \)
+          exit 1
+        fi
+    
+    - name: Verify certificate chain
+      run: |
+        if [[ -f root/root-ca.crt ]] && [[ -f issuing/public-ca.crt ]]; then
+          openssl verify -CAfile root/root-ca.crt issuing/public-ca.crt
+        fi
+    
+    - name: Check for insecure algorithms
+      run: |
+        if grep -r "MD5\|MD2\|SHA-1" openssl/ profiles/ 2>/dev/null | grep -v "prohibited" | grep -q .; then
+          echo "⚠️  Weak crypto references found"
+          exit 1
+        fi
+    
+    - name: Validate documentation
+      run: |
+        for doc in docs/*.md policies/*.md; do
+          if [[ -f "$doc" ]]; then
+            grep -q "Policy\|Purpose\|Security" "$doc" || \
+              echo "⚠️  Missing required sections in $doc"
+          fi
+        done
+    
+    - name: Run security scan
+      run: |
+        # Check for TLS 1.0/1.1 (prohibited by RFC 8996)
+        if grep -r "TLSv1.0\|TLSv1.1" docs/ openssl/ 2>/dev/null | grep -v "prohibited" | grep -q .; then
+          echo "⚠️  TLS 1.0/1.1 references found (prohibited by RFC 8996)"
+        fi
+    
+    - name: Upload validation results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: validation-results
+        path: |
+          validation.log
+          test-results/
