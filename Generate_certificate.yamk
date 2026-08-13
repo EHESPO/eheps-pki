@@ -1,0 +1,59 @@
+name: Generate Certificates
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Certificate type (tls|mtls|smime|admin)'
+        required: true
+        default: 'tls'
+      domain:
+        description: 'Domain name'
+        required: true
+        default: 'eheps.com'
+      cn:
+        description: 'Common Name'
+        required: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install OpenSSL
+      run: sudo apt-get update && sudo apt-get install -y openssl
+    
+    - name: Generate CSR
+      run: |
+        ./scripts/generate-csr.sh \
+          --type ${{ github.event.inputs.type }} \
+          --domain ${{ github.event.inputs.domain }} \
+          --cn "${{ github.event.inputs.cn }}"
+    
+    - name: Sign Certificate (via CA)
+      run: |
+        # Use Cloud HSM or internal CA API
+        # This is a placeholder - actual signing would use HSM/KMS
+        echo "Signing certificate with EHEPS Issuing CA..."
+    
+    - name: Verify Certificate
+      run: |
+        ./scripts/verify-chain.sh certificates/*.crt
+    
+    - name: Upload Certificate
+      uses: actions/upload-artifact@v3
+      with:
+        name: issued-certificates
+        path: certificates/*.crt
+        retention-days: 7
+    
+    - name: Deploy Secrets
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # Deploy certificate as GitHub secret
+        gh secret set EHEPS_CERT -b "$(cat certificates/*.crt)"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
