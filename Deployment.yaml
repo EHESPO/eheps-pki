@@ -1,0 +1,9 @@
+- name: Generate TLS Certificate
+  run: |
+    gh eheps-pki generate \
+      --type tls \
+      --domain eheps.com
+
+- name: Deploy to GitHub Secrets
+  run: |
+    gh secret set EHEPS_TLS_CERT --body "$(cat certificates/eheps.com.crt)"
