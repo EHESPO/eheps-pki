@@ -1,0 +1,7 @@
+Event Alert Threshold
+Certificate Expiration 90, 30, 14, 7, 1 day(s)
+Revocation Events Immediate
+CA Signing Operations Real-time
+CRL/OCSP Availability 5-minute intervals
+Unexpected Issuance Immediate
+DNS CAA Changes 15-minute intervals
