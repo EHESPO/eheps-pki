@@ -1,0 +1,109 @@
+eheps-pki/
+│
+├── .github/
+│   └── workflows/
+│       ├── ci-cd-validate.yml
+│       ├── generate-certificates.yml
+│       └── security-audit.yml
+│
+├── docs/
+│   ├── 01-certificate-policy.md
+│   ├── 02-certification-practice-statement.md
+│   ├── 03-architecture-overview.md
+│   ├── 04-key-management-procedures.md
+│   ├── 05-incident-response-plan.md
+│   ├── 06-certificate-lifecycle.md
+│   ├── 07-github-integration-guide.md
+│   └── 08-troubleshooting-guide.md
+│
+├── policies/
+│   ├── certificate-profiles.yaml
+│   ├── revocation-policy.yaml
+│   └── ca-issuance-policy.yaml
+│
+├── profiles/
+│   ├── tls-web.conf
+│   ├── tls-api.conf
+│   ├── mtls-service.conf
+│   ├── smime-email.conf
+│   ├── admin-auth.conf
+│   ├── ca-issuing.conf
+│   └── root-ca.conf
+│
+├── openssl/
+│   ├── root-ca.cnf
+│   ├── public-issuing-ca.cnf
+│   └── internal-issuing-ca.cnf
+│
+├── scripts/
+│   ├── 01-generate-csr.sh
+│   ├── 02-sign-certificate.sh
+│   ├── 03-verify-chain.sh
+│   ├── 04-check-certificate-health.sh
+│   ├── 05-lint-configurations.sh
+│   ├── 06-revoke-certificate.sh
+│   ├── 07-deploy-github-secrets.sh
+│   └── 08-backup-keys.sh
+│
+├── templates/
+│   ├── csr-request-template.json
+│   ├── certificate-request-template.yaml
+│   └── github-actions-template.yaml
+│
+├── examples/
+│   ├── github-actions/
+│   │   ├── sign-git-commit.yml
+│   │   ├── deploy-tls-certificate.yml
+│   │   └── auto-renew-certificates.yml
+│   └── docker/
+│       └── Dockerfile.openssl-alpine
+│
+├── tests/
+│   ├── test-certificate-validation.sh
+│   ├── test-verification-chain.sh
+│   ├── test-revocation.sh
+│   └── test-hsm-connection.sh
+│
+├── root/
+│   ├── eheps-root-ca.crt
+│   └── root-ca-policy.md
+│
+├── issuing/
+│   ├── eheps-public-issuing-ca.crt
+│   └── eheps-internal-issuing-ca.crt
+│
+├── crl/
+│   ├── public-ca-revocation-list.crl
+│   └── internal-ca-revocation-list.crl
+│
+├── certificates/
+│   ├── eheps-com-tls.crt
+│   ├── eheps-org-tls.crt
+│   ├── api-eheps-com-tls.crt
+│   ├── admin-eheps-com-auth.crt
+│   ├── executive-eheps-com-smime.crt
+│   └── github-signing-key.crt
+│
+├── audit/
+│   ├── audit-log-2026-01.log
+│   ├── audit-log-2026-02.log
+│   └── .gitkeep
+│
+├── scripts/
+│   └── .gitkeep
+│
+├── .env.example
+├── .gitignore
+├── .pre-commit-config.yaml
+├── .markdownlint.yaml
+├── README.md
+├── LICENSE
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+├── Makefile
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+└── requirements.txt
