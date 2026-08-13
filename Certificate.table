@@ -1,0 +1,8 @@
+Profile Purpose Lifetime Key Size
+TLS-WEB Public websites 90 days RSA 3072-bit
+TLS-API API endpoints 90 days RSA 3072-bit
+MTLS Service auth 180 days RSA 3072-bit
+S/MIME Email security 365 days RSA 3072-bit
+ADMIN Admin auth 365 days RSA 3072-bit
+CA Issuing CA 10 years RSA 4096-bit
+ROOT Root CA 20 years RSA 4096-bit
