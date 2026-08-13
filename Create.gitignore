@@ -1,0 +1,70 @@
+# Private Keys - NEVER COMMIT
+*.key
+*.pem
+*.p12
+*.pfx
+*.priv
+*.private
+*.secret
+*.encrypted
+*.hsm
+*.kms
+private/
+secrets/
+credentials/
+
+# Certificate Signing Requests
+*.csr
+*.req
+*.p10
+
+# Certificate Data
+certificates/*.key
+root/private/
+issuing/private/
+tmp-certs/
+
+# Environment Files
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Sensitive Data
+*.password
+*.token
+*.credential
+*.service-account
+
+# Logs and Audit
+audit/*.log
+audit/*.json
+*.log
+*.tmp
+
+# Build Artifacts
+dist/
+build/
+vendor/
+*.out
+*.bin
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test Outputs
+test-results/
+coverage/
+*.test
+
+# Backup Files
+*.bak
+*.backup
+*.old
+*.orig
